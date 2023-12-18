@@ -1,7 +1,7 @@
-package academy.devdojo.springboot2.controller;
+package academy.devdojo.springbootessentials.controller;
 
-import academy.devdojo.springboot2.domain.Anime;
-import academy.devdojo.springboot2.util.DateUtil;
+import academy.devdojo.springbootessentials.domain.Anime;
+import academy.devdojo.springbootessentials.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.GetMapping;
