@@ -30,4 +30,13 @@ public static List<Anime> animes;
         anime.setId(ThreadLocalRandom.current().nextLong(3,100000));
         return anime;
     }
+
+    public void delete(long id) {
+        animes.remove(findById(id));
+    }
+
+    public void replace(Anime anime) {
+        delete(anime.getId());
+        animes.add(anime);
+    }
 }
