@@ -22,7 +22,6 @@ public class AnimeController {
     private final DateUtil dateUtil;
     private final AnimeService animeService;
 
-    //localhost:8080/anime/list
     @GetMapping
     public ResponseEntity<List<Anime>> list(){
         log.info(dateUtil.formatLocalDateTimeToDatabaseStyle(LocalDateTime.now()));
@@ -32,6 +31,11 @@ public class AnimeController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<Anime> findById(@PathVariable long id){
         return ResponseEntity.ok(animeService.findByOrThrowBadRequestException(id));
+    }
+
+    @GetMapping(path = "/{name}")
+    public ResponseEntity<List<Anime>>findById(@PathVariable String name){
+        return ResponseEntity.ok(animeService.findByName(name));
     }
 
     @PostMapping
