@@ -29,17 +29,17 @@ public class AnimeController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Anime> findById(@PathVariable long id){
+    public ResponseEntity<Anime> findBy(@PathVariable long id){
         return ResponseEntity.ok(animeService.findByOrThrowBadRequestException(id));
     }
 
-    @GetMapping(path = "/{name}")
-    public ResponseEntity<List<Anime>>findById(@PathVariable String name){
+    @GetMapping(path = "/{find}")
+    public ResponseEntity<List<Anime>>findByName(@RequestParam String name){
         return ResponseEntity.ok(animeService.findByName(name));
     }
 
     @PostMapping
-    public ResponseEntity<Anime> save(@RequestBody AnimePostRequestBody animePostRequestBody){
+    public ResponseEntity<Anime> save(@RequestBody AnimePostRequestBody animePostRequestBody) throws Exception{
         return new ResponseEntity<>(animeService.save(animePostRequestBody),HttpStatus.CREATED);
     }
 

@@ -1,6 +1,7 @@
 package academy.devdojo.springbootessentials.services;
 
 import academy.devdojo.springbootessentials.domain.Anime;
+import academy.devdojo.springbootessentials.exception.BadRequestException;
 import academy.devdojo.springbootessentials.mapper.AnimeMapper;
 import academy.devdojo.springbootessentials.repository.AnimeRepository;
 import academy.devdojo.springbootessentials.requests.AnimePostRequestBody;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,10 +32,15 @@ public class AnimeService{
 
     public Anime findByOrThrowBadRequestException(long id){
         return animeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"Anime not Found"));
+                .orElseThrow(() -> new BadRequestException("Anime not Found"));
     }
-    public Anime save(AnimePostRequestBody animePostRequestBody) {
-        return animeRepository.save(AnimeMapper.INSTANCE.toAnime(animePostRequestBody));
+
+    @Transactional(rollbackOn = Exception.class)
+    public Anime save(AnimePostRequestBody animePostRequestBody) throws Exception {
+        Anime save = animeRepository.save(AnimeMapper.INSTANCE.toAnime(animePostRequestBody));
+        if (true)
+            throw new Exception("bad code");
+        return save;
     }
 
     public void delete(long id) {
