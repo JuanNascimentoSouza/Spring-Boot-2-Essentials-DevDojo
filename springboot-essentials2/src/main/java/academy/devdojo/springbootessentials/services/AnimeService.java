@@ -35,12 +35,10 @@ public class AnimeService{
                 .orElseThrow(() -> new BadRequestException("Anime not Found"));
     }
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional
     public Anime save(AnimePostRequestBody animePostRequestBody) throws Exception {
-        Anime save = animeRepository.save(AnimeMapper.INSTANCE.toAnime(animePostRequestBody));
-        if (true)
-            throw new Exception("bad code");
-        return save;
+        return animeRepository.save(AnimeMapper.INSTANCE.toAnime(animePostRequestBody));
+
     }
 
     public void delete(long id) {
