@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -73,12 +75,25 @@ class AnimeRepositoryTest {
     @DisplayName("Find By Name returns empty list when No Animes Is Found")
     void findName_ReturnsEmptyList_WhenAnimeNotFound() {
         List<Anime> animes = this.animeRepository.findByName("123");
-        assertThat(animes).isEmpty();
+        assertThat(animes)
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("Save throw ContraintValidationException when name is empty")
+    void save_ContraintValidationException_WhenNameIsEmpty() {
+        Anime anime = new Anime();
+//        assertThatThrownBy(() -> this.animeRepository.save(animeToBeSaved))
+//                .isInstanceOf(ConstraintViolationException.class);
+
+        assertThatExceptionOfType(ConstraintViolationException.class)
+                .isThrownBy(() -> this.animeRepository.save(anime))
+                .withMessageContaining("The anime cannot be empty");
+
     }
 
 
-
-    private Anime createAnime(){
+    private Anime createAnime() {
         return Anime.builder()
                 .name("Hajime no Ippo")
                 .build();
