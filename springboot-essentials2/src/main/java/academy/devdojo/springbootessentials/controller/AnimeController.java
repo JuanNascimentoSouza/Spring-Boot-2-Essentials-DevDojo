@@ -36,7 +36,7 @@ public class AnimeController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Anime> findBy(@PathVariable long id){
+    public ResponseEntity<Anime> findById(@PathVariable long id){
         return ResponseEntity.ok(animeService.findByOrThrowBadRequestException(id));
     }
 
