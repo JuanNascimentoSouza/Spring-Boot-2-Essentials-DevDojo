@@ -4,6 +4,7 @@ import academy.devdojo.springbootessentials.domain.Anime;
 import academy.devdojo.springbootessentials.domain.User;
 import academy.devdojo.springbootessentials.repository.AnimeRepository;
 import academy.devdojo.springbootessentials.repository.DevDojoUserRepository;
+import academy.devdojo.springbootessentials.repository.UserRepository;
 import academy.devdojo.springbootessentials.requests.AnimePostRequestBody;
 import academy.devdojo.springbootessentials.util.AnimeCreator;
 import academy.devdojo.springbootessentials.util.AnimePostRequestBodyCreator;
@@ -49,7 +50,7 @@ class AnimeControllerIT {
     private AnimeRepository animeRepository;
 
     @Autowired
-    private DevDojoUserRepository devDojoUserRepository;
+    private UserRepository userRepository;
 
 
     public static final String PASSWORD_ENCRYPT = "{bcrypt}$2a$10$j3LBgSA.o/DfRjmnLdvYyOwphTmFazz5BKbgNXw8XkcIK9wMA9gCC";
@@ -93,7 +94,7 @@ class AnimeControllerIT {
     @DisplayName("list returns list of anime inside page object when sucessful")
     void list_ReturnsListOfAnimesInsidePageObject_WhenSucessful() {
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
 
         String expectedName = savedAnime.getName();
 
@@ -117,7 +118,7 @@ class AnimeControllerIT {
     void findAll_ReturnsListOfAnimesInsidePageObject_WhenSucessful() {
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         String expectedName = savedAnime.getName();
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
 
         List<Anime> animes = testRestTemplateRoleUser.exchange("/animes/all",
                 HttpMethod.GET,
@@ -138,7 +139,7 @@ class AnimeControllerIT {
     @DisplayName("findById returns anime when sucessful")
     void findById_ReturnsAnime_WhenSucessful() {
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         Long expectedId = savedAnime.getId();
 
         Anime anime = testRestTemplateRoleUser.getForObject("/animes/{id}", Anime.class, expectedId);
@@ -156,7 +157,7 @@ class AnimeControllerIT {
     void findByName_ReturnsListOfAnime_WhenSucessful() {
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         String expectedName = savedAnime.getName();
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
 
         String url = String.format("/animes/find?name=%s", expectedName);
         List<Anime> animes = testRestTemplateRoleUser.exchange(url,
@@ -177,7 +178,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("findByName returns an empty list of anime when anime is not found")
     void findByName_ReturnsEmptyListOfAnime_WhenAnimeIsNotFound() {
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         List<Anime> animes = testRestTemplateRoleUser.exchange("/animes/find?name=dbz",
                 HttpMethod.GET,
                 null,
@@ -192,7 +193,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("save returns anime when sucessful")
     void save_ReturnsAnime_WhenSucessful() {
-        devDojoUserRepository.save(admin);
+        userRepository.save(admin);
         AnimePostRequestBody animePostRequestBody = AnimePostRequestBodyCreator.createAnimePostRequestBody();
         ResponseEntity<Anime> entity = testRestTemplateRoleAdmin.postForEntity("/animes", animePostRequestBody, Anime.class);
         Assertions.assertThat(entity)
@@ -209,7 +210,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("save returns 403 when user is not admin")
     void save_Returns403_WhenUserIsNotAdmin() {
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         AnimePostRequestBody animePostRequestBody = AnimePostRequestBodyCreator.createAnimePostRequestBody();
         ResponseEntity<Anime> entity = testRestTemplateRoleUser.postForEntity("/animes", animePostRequestBody, Anime.class);
         Assertions.assertThat(entity)
@@ -222,7 +223,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("replace updates anime when sucessful")
     void replace_UpdatesAnime_WhenSucessful() {
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
         savedAnime.setName("new name");
 
@@ -237,7 +238,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("delete removes anime when user is admin")
     void delete_RemovesAnime_WhenUserIsAdmin() {
-        devDojoUserRepository.save(admin);
+        userRepository.save(admin);
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
         ResponseEntity<Void> entity = testRestTemplateRoleAdmin.exchange("/animes/{id}", HttpMethod.DELETE, new HttpEntity<>(savedAnime), Void.class, savedAnime.getId());
@@ -252,7 +253,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("delete return 403 when user is not admin")
     void delete_Returns403_WhenUserIsNotAdmin() {
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
         ResponseEntity<Void> entity = testRestTemplateRoleUser.exchange("/animes/{id}", HttpMethod.DELETE, new HttpEntity<>(savedAnime), Void.class, savedAnime.getId());
@@ -267,7 +268,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("delete removes anime when path and user is admin")
     void delete_RemovesAnime_WhenPathAndUserIsAdmin() {
-        devDojoUserRepository.save(admin);
+        userRepository.save(admin);
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
         ResponseEntity<Void> entity = testRestTemplateRoleAdmin.exchange("/animes/admin/{id}", HttpMethod.DELETE, new HttpEntity<>(savedAnime), Void.class, savedAnime.getId());
@@ -282,7 +283,7 @@ class AnimeControllerIT {
     @Test
     @DisplayName("delete returns 403 when path is admin and user is not admin")
     void delete_RemovesAnime_WhenPathIsAdminAndUserIsNotAdmin() {
-        devDojoUserRepository.save(user);
+        userRepository.save(user);
         Anime savedAnime = animeRepository.save(AnimeCreator.createAnimeToBeSaved());
 
         ResponseEntity<Void> entity = testRestTemplateRoleUser.exchange("/animes/admin/{id}", HttpMethod.DELETE, new HttpEntity<>(savedAnime), Void.class, savedAnime.getId());
